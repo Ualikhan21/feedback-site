@@ -27,7 +27,7 @@ form.addEventListener("submit", async function(event) {
     try {
 
         const response = await fetch(
-            "ТВОЙ_WORKER_URL",
+            "https://feedback-telegram.uali-zhunisbek.workers.dev/",
             {
                 method: "POST",
 
