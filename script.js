@@ -1,34 +1,64 @@
-const btn = document.getElementById("sendBtn");
+const form = document.getElementById("feedbackForm");
 
-btn.addEventListener("click", async () => {
+form.addEventListener("submit", async function(event) {
 
-    const name = document.getElementById("name").value;
-    const message = document.getElementById("message").value;
+    event.preventDefault();
 
-    if (!name || !message) {
-        document.getElementById("status").innerText =
-            "Заполни все поля";
+    const password = document.getElementById("password").value;
+
+    const question = document.querySelector(
+        'input[name="question"]:checked'
+    ).value;
+
+    const answer = document.getElementById("answer").value;
+
+    const status = document.getElementById("status");
+
+
+    if (!password || !answer) {
+        status.innerText = "Заполните все поля.";
         return;
     }
 
 
-    await fetch("https://feedback-telegram.uali-zhunisbek.workers.dev", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            name: name,
-            message: message
-        })
-    });
+    status.innerText = "Отправка...";
 
 
-    document.getElementById("status").innerText =
-        "Сообщение отправлено ✅";
+    try {
+
+        const response = await fetch(
+            "ТВОЙ_WORKER_URL",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    password: password,
+                    question: question,
+                    answer: answer
+                })
+            }
+        );
 
 
-    document.getElementById("name").value = "";
-    document.getElementById("message").value = "";
+        if (!response.ok) {
+            throw new Error("Ошибка сервера");
+        }
+
+
+        status.innerText = "Форма успешно отправлена ✅";
+
+        form.reset();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        status.innerText = "Не удалось отправить форму ❌";
+    }
 
 });
